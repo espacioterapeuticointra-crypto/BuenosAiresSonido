@@ -223,8 +223,8 @@ function generarWhatsApp(){
 
     let totalGeneral = 0;
 
-    let mensaje = "*BUENOS AIRES SONIDO*%0A";
-    mensaje += "*Solicitud de Presupuesto*%0A%0A";
+    let mensaje = "     *BUENOS AIRES SONIDO*%0A";
+    mensaje += "    *Solicitud de Presupuesto*%0A%0A";
 
     if(nombre) mensaje += " *Cliente:* " + nombre + "%0A";
     if(telefono) mensaje += " *Teléfono:* " + telefono + "%0A";
@@ -278,8 +278,7 @@ totalGeneral.toLocaleString("es-AR") +
 
     }
 
-    mensaje += "%0AGracias por elegir *Buenos Aires Sonido* 🎵";
-
+   
     window.open(
         "https://wa.me/?text=" + mensaje,
         "_blank"
