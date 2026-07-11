@@ -6,7 +6,7 @@ const productos = [
 
 {categoria:"POTENCIAS",nombre:'Para Parlantes de 12"',precio:25000},
 {categoria:"POTENCIAS",nombre:'Para Parlantes de 15"',precio:25000},
-{categoria:"POTENCIAS",nombre:'Para los 4 Parlantes ',precio:25000},
+{categoria:"POTENCIAS",nombre:'Para los 4 Parlantes ',precio:50000},
 
 {categoria:"MICRÓFONOS",nombre:"Micrófono de mano con cable",precio:5000},
 {categoria:"MICRÓFONOS",nombre:"Micrófono de instrumento con cable",precio:5000},
