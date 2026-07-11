@@ -172,8 +172,8 @@ function generarWhatsApp(){
     const fecha=datos[3].value;
     const observaciones=datos[4].value;
 
-    let texto=`*   BUENOS AIRES SONIDO*%0A`;
-    texto+=`   Solicitud de Presupuesto%0A%0A`;
+    let texto=`*BUENOS AIRES SONIDO*%0A`;
+    texto+=`Solicitud de Presupuesto%0A%0A`;
 
     if(nombre) texto+=`*Cliente:* ${nombre}%0A`;
     if(telefono) texto+=`*Teléfono:* ${telefono}%0A`;
@@ -203,84 +203,10 @@ function generarWhatsApp(){
 
     }
 
-    
+    texto+=`Tu Sonidista Amigo.`;
+
     window.open("https://wa.me/?text="+texto,"_blank");
 
 }
 
 render();
-function generarWhatsApp(){
-
-    const inputs = document.querySelectorAll("input");
-    const textarea = document.querySelector("textarea");
-
-    const nombre = inputs[0].value;
-    const telefono = inputs[1].value;
-    const lugar = inputs[2].value;
-    const fecha = inputs[3].value;
-    const observaciones = textarea.value;
-
-    let totalGeneral = 0;
-
-    let mensaje = "     *BUENOS AIRES SONIDO*%0A";
-    mensaje += "    *Solicitud de Presupuesto*%0A%0A";
-
-    if(nombre) mensaje += " *Cliente:* " + nombre + "%0A";
-    if(telefono) mensaje += " *Teléfono:* " + telefono + "%0A";
-    if(lugar) mensaje += " *Lugar:* " + lugar + "%0A";
-
-    if(fecha){
-
-        const f = fecha.split("-");
-
-        mensaje += " *Fecha:* " + f[2] + "/" + f[1] + "/" + f[0] + "%0A";
-
-    }
-
-    mensaje += "%0A";
-
-    let categoriaActual = "";
-
-    items.forEach(item=>{
-
-        if(item.categoria !== categoriaActual){
-
-            categoriaActual = item.categoria;
-
-           mensaje += "%0A*" + categoriaActual + "*%0A";
-
-        }
-
-        const subtotal = item.precio * item.cantidad;
-
-        totalGeneral += subtotal;
-
-        mensaje += "• " +
-        item.nombre +
-        "  x" +
-        item.cantidad +
-        "   $" +
-        subtotal.toLocaleString("es-AR") +
-        "%0A";
-
-    });
-
-   mensaje += "%0A";
-mensaje += "💰 *TOTAL: $" +
-totalGeneral.toLocaleString("es-AR") +
-"*%0A";
-
-    if(observaciones){
-
-        mensaje += "%0A📝 *Observaciones*%0A";
-        mensaje += observaciones + "%0A";
-
-    }
-
-   
-    window.open(
-        "https://wa.me/?text=" + mensaje,
-        "_blank"
-    );
-
-}
