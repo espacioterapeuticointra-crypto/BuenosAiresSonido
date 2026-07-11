@@ -4,9 +4,8 @@ const productos = [
 {categoria:"BAFLES",nombre:'Par de bafles 15"',precio:30000},
 {categoria:"BAFLES",nombre:'Bafle potenciado 12" (Monitor)',precio:30000},
 
-{categoria:"POTENCIAS",nombre:'300 + 300 (Para juego 12")',precio:25000},
-{categoria:"POTENCIAS",nombre:'400 + 400 (Para juego 15")',precio:25000},
-{categoria:"POTENCIAS",nombre:'900 + 900 (Para juego 15" + Sub 18")',precio:34000},
+{categoria:"POTENCIAS",nombre:'(Para juego 12")',precio:25000},
+{categoria:"POTENCIAS",nombre:'(Para juego 15")',precio:25000},
 
 {categoria:"MICRÓFONOS",nombre:"Micrófono de mano con cable",precio:5000},
 {categoria:"MICRÓFONOS",nombre:"Micrófono de instrumento con cable",precio:5000},
@@ -16,7 +15,7 @@ const productos = [
 {categoria:"PROCESADORES",nombre:"Caja Directa DI20",precio:4000},
 
 {categoria:"CONSOLAS",nombre:"Consola Digital 8 CH",precio:40000},
-{categoria:"CONSOLAS",nombre:"Consola Analógica 16 CH (Behringer Xenyx)",precio:60000},
+{categoria:"CONSOLAS",nombre:"Consola Analógica 16 CH",precio:60000},
 
 {categoria:"ACCESORIOS",nombre:"Pie de micrófono",precio:4000},
 
