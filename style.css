@@ -85,16 +85,11 @@ button{
     font-weight:bold;
 }
 
-
-button:hover{
+.btn-whatsapp:hover{
     background:#1EBE5D;
     transform:scale(1.03);
 }
 
-.btn-limpiar:hover{
-    background:#666 !important;
-    transform:none;
-}
 
 table{width:100%;border-collapse:collapse}
 td,th{padding:8px;border-bottom:1px solid #333;}
