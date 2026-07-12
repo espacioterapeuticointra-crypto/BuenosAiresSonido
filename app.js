@@ -249,5 +249,27 @@ function limpiarTodo(){
 
     render();
 
+function limpiarTodo(){
+
+    items = [
+
+        {
+            categoria:"CONCEPTOS FIJOS",
+            nombre:"Operador de sonido 2 Horas",
+            precio:30000,
+            cantidad:1,
+            fijo:true
+        },
+        {
+            categoria:"CONCEPTOS FIJOS",
+            nombre:"Traslado",
+            precio:50000,
+            cantidad:1,
+            fijo:true
+        }
+
+    ];
+
+    render();
 
 }
