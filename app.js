@@ -1,6 +1,6 @@
 const productos = [
 
-{categoria:"BAFLES",nombre:'Par de bafles 12"',precio:30000},
+{categoria:"BAFLES",nombre:'Par de bafles 18"',precio:30000},
 {categoria:"BAFLES",nombre:'Par de bafles 15"',precio:30000},
 {categoria:"BAFLES",nombre:'Bafle potenciado 12" (Monitor)',precio:30000},
 
