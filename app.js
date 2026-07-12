@@ -32,7 +32,24 @@ const lista = document.getElementById("lista");
 const carrito = document.getElementById("carrito");
 const total = document.getElementById("total");
 
-let items = [];
+let items = [
+
+{
+    categoria:"CONCEPTOS FIJOS",
+    nombre:"Operador de sonido",
+    precio:50000,
+    cantidad:1,
+    fijo:true
+},
+{
+    categoria:"CONCEPTOS FIJOS",
+    nombre:"Traslado",
+    precio:50000,
+    cantidad:1,
+    fijo:true
+}
+
+];
 
 function render() {
 
