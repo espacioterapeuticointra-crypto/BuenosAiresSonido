@@ -6,7 +6,7 @@
 const conceptosFijos = [
 
     {
-        nombre: "Operador de Sonido          2 Horas",
+        nombre: "Operador de Sonido 2 Horas",
         precio: 40000
     },
 
@@ -253,7 +253,7 @@ function generarWhatsApp(){
 
  
 
-    window.open("https://wa.me/?text="+texto,"_blank");
+window.open("https://wa.me/5491154730988?text="+texto,"_blank");
 
 }
 
