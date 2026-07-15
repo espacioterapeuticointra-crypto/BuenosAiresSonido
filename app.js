@@ -31,16 +31,14 @@ const productos = [
 {categoria:"MICRÓFONOS",nombre:"Micrófono de instrumento con cable",precio:5000},
 
 {categoria:"ACCESORIOS",nombre:"Pie de micrófono",precio:4000},
-
-{categoria:"PROCESADORES",nombre:"Virtualizer 2000 (Behringer)",precio:10000},
-{categoria:"PROCESADORES",nombre:"EQ 15x2 (Moon)",precio:10000},
+{categoria:"PROCESADORES",nombre:"Virtualizer 2000 (Behringer)",precio:10000, oculto:true},
+{categoria:"PROCESADORES",nombre:"EQ 15x2 (Moon)",precio:10000, oculto:true},
 {categoria:"PROCESADORES",nombre:"Caja Directa DI20",precio:4000},
 
 {categoria:"CONSOLAS",nombre:"Consola Digital 8 CH",precio:40000},
 {categoria:"CONSOLAS",nombre:"Consola Analógica 16 CH",precio:60000},
 
-{categoria:"GRABACIÓN DEL SHOW",nombre:"Main L y R",precio:30000},
-{categoria:"GRABACIÓN DEL SHOW",nombre:"Multitrack",precio:50000},
+{categoria:"GRABACIÓN",nombre:"Grabación Multitrack",precio:50000, oculto:true},
 
 ...conceptosFijos.map(c => ({
     categoria: "CONCEPTOS FIJOS",
@@ -113,6 +111,10 @@ const combos = {
 
 };
 
+let mostrarEquipamiento = false;
+let productosConfirmados = [];
+let cantidadesPendientes = {};
+
 let items = conceptosFijos.map(c => ({
     categoria: "CONCEPTOS FIJOS",
     nombre: c.nombre,
@@ -122,6 +124,8 @@ let items = conceptosFijos.map(c => ({
 }));
 
 
+
+
 function render() {
 
 lista.innerHTML = "";
@@ -129,9 +133,25 @@ lista.innerHTML = "";
 let categoriaActual = "";
 
 productos.forEach((producto, indice) => {
-
-    // No mostrar los conceptos fijos en la lista de equipamiento
+// No mostrar conceptos fijos
 if (producto.fijo) {
+    return;
+}
+
+// No mostrar productos manejados por interruptores
+if (producto.oculto) {
+    return;
+}
+
+// No mostrar productos que ya están en el presupuesto
+const yaEsta = items.some(item => item.nombre === producto.nombre);
+
+if (yaEsta) {
+    return;
+}
+
+// No mostrar productos ya confirmados
+if (productosConfirmados.includes(producto.nombre)) {
     return;
 }
 
@@ -153,8 +173,7 @@ if (producto.fijo) {
 
     }
 
-    const item = items.find(i => i.nombre === producto.nombre);
-    const cantidad = item ? item.cantidad : 0;
+   const cantidad = cantidadesPendientes[producto.nombre] || 0;
 
     lista.innerHTML += `
         <div class="producto">
@@ -168,12 +187,15 @@ if (producto.fijo) {
             </div>
 
 <div class="controles">
+<button class="btn-cantidad" onclick="restarPendiente(${indice})">−</button>
 
-    <button class="btn-cantidad" onclick="restar(${indice})">−</button>
+<span class="cantidad">${cantidad}</span>
 
-    <span class="cantidad">${cantidad}</span>
+<button class="btn-cantidad" onclick="sumarPendiente(${indice})">+</button>
 
-    <button class="btn-cantidad" onclick="sumar(${indice})">+</button>
+    <button class="btn-agregar" onclick="agregarAlPresupuesto(${indice})">
+         Agregar
+    </button>
 
 </div>
 
@@ -182,11 +204,19 @@ if (producto.fijo) {
 
 });
 
-    carrito.innerHTML="";
+    carrito.innerHTML = "";
 
-    let suma=0;
+let suma = 0;
 
-items.forEach(item => {
+// ===========================
+// PRODUCTOS DEL COMBO + FIJOS
+// ===========================
+
+const normales = items.filter(item =>
+    !item.manual
+);
+
+normales.forEach(item => {
 
     const subtotal = item.precio * item.cantidad;
 
@@ -230,8 +260,82 @@ items.forEach(item => {
 
 });
 
-    total.textContent=suma.toLocaleString("es-AR");
+// ===========================
+// AGREGADOS MANUALMENTE
+// ===========================
 
+console.log("ITEMS:", items);
+console.log("MANUALES:", items.filter(item => item.manual));
+
+const manuales = items.filter(item =>
+    item.manual
+);
+
+if(manuales.length){
+
+    carrito.innerHTML += `
+
+        <tr>
+
+            <td colspan="3"
+                style="
+                    padding-top:18px;
+                    padding-bottom:8px;
+                    color:#66b3ff;
+                    font-weight:bold;
+                    text-align:center;
+                    border-top:1px solid #444;
+                ">
+
+                AGREGADO MANUALMENTE
+
+            </td>
+
+        </tr>
+
+    `;
+
+    manuales.forEach(item => {
+
+        const subtotal = item.precio * item.cantidad;
+
+        suma += subtotal;
+
+        const indiceProducto = productos.findIndex(
+            p => p.nombre === item.nombre
+        );
+
+        const controles = `
+            <div class="controles-resumen">
+
+                <button class="btn-mini" onclick="restar(${indiceProducto})">−</button>
+
+                <span class="cantidad-mini">${item.cantidad}</span>
+
+                <button class="btn-mini" onclick="sumar(${indiceProducto})">+</button>
+
+            </div>
+        `;
+
+        carrito.innerHTML += `
+
+        <tr>
+
+            <td>${item.nombre}</td>
+
+            <td>${controles}</td>
+
+            <td>$${subtotal.toLocaleString("es-AR")}</td>
+
+        </tr>
+
+        `;
+
+    });
+
+}
+
+total.textContent = suma.toLocaleString("es-AR");
 }
 
 function sumar(indice){
@@ -279,9 +383,15 @@ function restar(indice){
 
         item.cantidad--;
 
-        if(item.cantidad <= 0){
-            items = items.filter(i => i.nombre !== producto.nombre);
-        }
+       if(item.cantidad <= 0){
+
+    items = items.filter(i => i.nombre !== producto.nombre);
+
+    productosConfirmados = productosConfirmados.filter(
+        nombre => nombre !== producto.nombre
+    );
+
+}
 
     }
 
@@ -291,6 +401,35 @@ function restar(indice){
 
 }
 
+function sumarPendiente(indice){
+
+    const producto = productos[indice];
+
+    if(!cantidadesPendientes[producto.nombre]){
+        cantidadesPendientes[producto.nombre] = 0;
+    }
+
+    cantidadesPendientes[producto.nombre]++;
+
+    render();
+
+}
+
+function restarPendiente(indice){
+
+    const producto = productos[indice];
+
+    if(!cantidadesPendientes[producto.nombre]){
+        cantidadesPendientes[producto.nombre] = 0;
+    }
+
+    if(cantidadesPendientes[producto.nombre] > 0){
+        cantidadesPendientes[producto.nombre]--;
+    }
+
+    render();
+
+}
 
 function generarWhatsApp(){
 
@@ -312,26 +451,83 @@ function generarWhatsApp(){
 
     texto+=`%0A------------------------%0A`;
 
+    const nombresWhats = {
+
+    "Par de bafles 12\"":"Bafles 12\"",
+    "Par de bafles 15\"":"Bafles 15\"",
+
+    "Bafle potenciado 12\" (Monitor)":"Monitor 12\"",
+
+    "Potencia Para bafles de 12\"":"Pot. 12\"",
+    "Potencia Para bafles de 15\"":"Pot. 15\"",
+    "Potencia Para los 4 bafles":"Pot. 4 Bafles",
+
+    "Consola Digital 8 CH":"Consola 8 CH",
+
+    "Micrófono de mano con cable":"Mic. Mano",
+    "Micrófono de instrumento con cable":"Mic. Inst.",
+
+    "Pie de micrófono":"Pie Mic.",
+
+    "Caja Directa DI20":"DI20",
+
+    "Grabación Multitrack":"G. Multi",
+
+    "Operador de Sonido 2 Horas":"Operador",
+
+    "Traslado zona Norte/Oeste":"Traslado"
+
+};
+
     let suma=0;
+let tituloManualMostrado = false;
 
     items.forEach(item=>{
+
+if(item.manual && !tituloManualMostrado){
+
+    texto += `%0A------------------------%0A`;
+    texto += `*AGREGADO MANUALMENTE*%0A`;
+
+    tituloManualMostrado = true;
+
+}
 
         const subtotal=item.precio*item.cantidad;
 
         suma+=subtotal;
 
-  if(item.fijo){
+const nombre = nombresWhats[item.nombre] || item.nombre;
 
-    texto += `${item.nombre} - $${subtotal.toLocaleString("es-AR")}%0A`;
+const cantidad = item.fijo ? "1" : item.cantidad.toString();
 
-}else{
+const precio = "$" + subtotal.toLocaleString("es-AR");
 
-    texto += `${item.nombre} x${item.cantidad} - $${subtotal.toLocaleString("es-AR")}%0A`;
+// 22 caracteres para el nombre
+// 3 para la cantidad
+// precio al final
 
-}
+texto += `${nombre} ${cantidad} $${subtotal.toLocaleString("es-AR")}%0A`;
 
     });
 
+// ===========================
+// EQUIPAMIENTO INCLUIDO
+// ===========================
+
+let incluidos = "";
+
+if(document.getElementById("chkVirtualizer").checked){
+    incluidos += `✅ Procesador Virtualizer 2000 (Behringer)%0A`;
+}
+
+if(document.getElementById("chkEQ").checked){
+    incluidos += `✅ EQ 15x2 (Moon)%0A`;
+}
+if(incluidos !== ""){
+    texto += `%0A*Equipamiento incluido:*%0A`;
+    texto += incluidos;
+}
     texto+=`------------------------%0A`;
     texto+=`*TOTAL:* $${suma.toLocaleString("es-AR")}%0A%0A`;
 
@@ -340,10 +536,12 @@ function generarWhatsApp(){
         texto+=`*Observaciones:*%0A${observaciones}%0A%0A`;
 
     }
-
  
 
-window.open("https://wa.me/5491154730988?text="+texto,"_blank");
+window.open(
+    "https://wa.me/5491154730988?text=" + encodeURIComponent(decodeURIComponent(texto)),
+    "_blank"
+);
 
 }
 
@@ -362,6 +560,22 @@ function limpiarTodo(){
     document.getElementById("chkMultitrack").checked = false;
 
     document.getElementById("tituloCombo").textContent = "";
+
+document.querySelectorAll(".combo-btn").forEach(btn => {
+    btn.classList.remove("activo");
+});
+
+mostrarEquipamiento = false;
+
+document.getElementById("seccionProductos").style.display = "none";
+
+const btnEquipamiento = document.getElementById("btnEquipamiento");
+
+btnEquipamiento.textContent = "Mostrar equipamiento";
+
+
+productosConfirmados = [];
+cantidadesPendientes = {};
 
     render();
 
@@ -386,6 +600,10 @@ function limpiarTodo(){
 }
 
 
+const btnEquipamiento = document.getElementById("btnEquipamiento");
+btnEquipamiento.disabled = true;
+btnEquipamiento.textContent = "Mostrar equipamiento";
+
     render();
 
 
@@ -399,7 +617,7 @@ function toggleMultitrack(){
 
     if(check.checked){
 
-        const producto = productos.find(p => p.nombre === "Multitrack");
+       const producto = productos.find(p => p.nombre === "Grabación Multitrack");
 
         if(producto){
 
@@ -422,11 +640,18 @@ function toggleMultitrack(){
     render();
 
 }
-
 // ===========================
 // CARGAR COMBO
 // ===========================
-function cargarCombo(nombreCombo){
+function cargarCombo(nombreCombo, boton){
+
+    // Poner todos los botones nuevamente en azul
+    document.querySelectorAll(".combo-btn").forEach(btn=>{
+        btn.classList.remove("activo");
+    });
+
+    // Pintar de verde el botón seleccionado
+    boton.classList.add("activo");
 
     // Mantener únicamente los conceptos fijos
     items = items.filter(item => item.fijo);
@@ -436,12 +661,12 @@ function cargarCombo(nombreCombo){
 
     const nombresBonitos = {
 
-        "50-solista":"Combo 50 Personas (Solista)",
-        "50-duo":"Combo 50 Personas (Duos)",
-        "50-trio":"Combo 50 Personas (Trios)",
-        "100-solista":"Combo 100 Personas (Solista)",
-        "100-duo":"Combo 100 Personas (Duos)",
-        "100-trio":"Combo 100 Personas (Trios)"
+        "50-solista":"50 Personas (Solista)",
+        "50-duo":"50 Personas (Duos)",
+        "50-trio":"50 Personas (Trios)",
+        "100-solista":"100 Personas (Solista)",
+        "100-duo":"100 Personas (Duos)",
+        "100-trio":"100 Personas (Trios)"
 
     };
 
@@ -454,29 +679,111 @@ function cargarCombo(nombreCombo){
 
         const producto = productos.find(p => p.nombre === productoCombo.nombre);
 
-        if(producto){
+    if(producto){
 
-            items.push({
+    items.push({
 
-                ...producto,
+        ...producto,
 
-                cantidad: productoCombo.cantidad
+        cantidad: productoCombo.cantidad,
 
-            });
-
-        }
+        manual: false
 
     });
 
+}
+
+    });
+
+  
     render();
+
+const btnEquipamiento = document.getElementById("btnEquipamiento");
+btnEquipamiento.disabled = false;
+btnEquipamiento.textContent = "Mostrar equipamiento";
+
+setTimeout(() => {
+
+    document.querySelector(".resumen").scrollIntoView({
+        behavior: "smooth",
+        block: "start"
+    });
+
+}, 100);
+
+}
+function agregarAlPresupuesto(indice){
+
+    const producto = productos[indice];
+
+    const cantidad = cantidadesPendientes[producto.nombre] || 0;
+
+    if(cantidad <= 0){
+        mostrarMensaje("⚠️ Primero elegí una cantidad","amarillo");
+        return;
+    }
+
+   items.push({
+    ...producto,
+    cantidad,
+    manual: true
+});
+
+    productosConfirmados.push(producto.nombre);
+
+    delete cantidadesPendientes[producto.nombre];
+
+    render();
+
+}
+
+// ===========================
+// MOSTRAR / OCULTAR EQUIPAMIENTO
+// ===========================
+function toggleEquipamiento(){
+    mostrarEquipamiento = !mostrarEquipamiento;
+
+    const boton = document.getElementById("btnEquipamiento");
+    const seccion = document.getElementById("seccionProductos");
+
+if(mostrarEquipamiento){
+
+    boton.textContent = "Ocultar equipamiento";
+    seccion.style.display = "block";
 
     setTimeout(() => {
 
-        document.querySelector(".resumen").scrollIntoView({
+        seccion.scrollIntoView({
             behavior: "smooth",
             block: "start"
         });
 
     }, 100);
+
+}else{
+
+    boton.textContent = "Mostrar equipamiento";
+    seccion.style.display = "none";
+
+}
+
+}
+
+// ===========================
+// MENSAJES TOAST
+// ===========================
+function mostrarMensaje(texto, color = "verde") {
+
+    const toast = document.getElementById("mensajeToast");
+
+    toast.textContent = texto;
+
+    toast.className = "toast " + color + " mostrar";
+
+    setTimeout(() => {
+
+        toast.className = "toast";
+
+    }, 2000);
 
 }

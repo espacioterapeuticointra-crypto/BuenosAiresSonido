@@ -392,3 +392,124 @@ background:#0d6efd;
 transform:translateX(22px);
 
 }
+
+.combo-btn.activo{
+    background:#198754;
+    border-color:#198754;
+    color:#fff;
+}
+
+.combo-btn.activo{
+    background:#198754;
+    border-color:#198754;
+    color:#fff;
+}
+
+.btn-equipamiento{
+    width:100%;
+    margin-top:10px;
+    padding:12px;
+    border:none;
+    border-radius:10px;
+    background:#6c757d;
+    color:#fff;
+    font-size:16px;
+    font-weight:bold;
+    cursor:pointer;
+    transition:.3s;
+}
+
+.btn-equipamiento:enabled{
+    background:#0d6efd;
+}
+
+.btn-equipamiento:enabled:hover{
+    background:#0b5ed7;
+}
+
+.btn-equipamiento:disabled{
+    opacity:.5;
+    cursor:not-allowed;
+}
+
+.btn-agregar{
+    margin-left:10px;
+    padding:6px 12px;
+    border:none;
+    border-radius:6px;
+    background:#198754;
+    color:#fff;
+    font-weight:bold;
+    cursor:pointer;
+    transition:.2s;
+}
+
+.btn-agregar:hover{
+    background:#157347;
+}
+
+/* ===========================
+   MENSAJES TOAST
+=========================== */
+
+.toast{
+
+    position:fixed;
+
+    bottom:30px;
+
+    left:50%;
+
+    transform:translateX(-50%) translateY(30px);
+
+    background:#1f1f1f;
+
+    color:white;
+
+    padding:14px 24px;
+
+    border-radius:12px;
+
+    font-size:16px;
+
+    font-weight:bold;
+
+    opacity:0;
+
+    transition:.3s;
+
+    pointer-events:none;
+
+    z-index:9999;
+
+    box-shadow:0 8px 25px rgba(0,0,0,.45);
+
+}
+
+.toast.mostrar{
+
+    opacity:1;
+
+    transform:translateX(-50%) translateY(0);
+
+}
+
+.toast.verde{
+
+    background:#198754;
+
+}
+
+.toast.amarillo{
+
+    background:#ffc107;
+
+    color:#222;
+
+}
+
+.toast.rojo{
+
+    background:#dc3545;
+
+}

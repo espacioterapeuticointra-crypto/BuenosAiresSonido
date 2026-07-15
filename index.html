@@ -30,47 +30,37 @@
 <input type="date">
 <textarea placeholder="Observaciones"></textarea>
 </section>
-
 <section class="combos">
 
 <h2>Combos Inteligentes</h2>
 
 <div class="combo-grid">
 
-<button class="combo-btn" onclick="cargarCombo('50-solista')">
-Combo 50 Personas (Solista)
+<button class="combo-btn" onclick="cargarCombo('50-solista', this)">
+50 Personas (Solista)
 </button>
 
-<button class="combo-btn" onclick="cargarCombo('50-duo')">
-Combo 50 Personas (Duos)
+<button class="combo-btn" onclick="cargarCombo('50-duo', this)">
+50 Personas (Duos)
 </button>
 
-<button class="combo-btn" onclick="cargarCombo('50-trio')">
-Combo 50 Personas (Trios)
+<button class="combo-btn" onclick="cargarCombo('50-trio', this)">
+50 Personas (Trios)
 </button>
 
-<button class="combo-btn" onclick="cargarCombo('100-solista')">
-Combo 100 Personas (Solista)
+<button class="combo-btn" onclick="cargarCombo('100-solista', this)">
+100 Personas (Solista)
 </button>
 
-<button class="combo-btn" onclick="cargarCombo('100-duo')">
-Combo 100 Personas (Duos)
+<button class="combo-btn" onclick="cargarCombo('100-duo', this)">
+100 Personas (Duos)
 </button>
 
-<button class="combo-btn" onclick="cargarCombo('100-trio')">
-Combo 100 Personas (Trios)
+<button class="combo-btn" onclick="cargarCombo('100-trio', this)">
+100 Personas (Trios)
 </button>
 
 </div>
-
-</section>
-
-
-<section class="productos" style="display:none;">
-
-<h2>Eleji el Equipamiento</h2>
-
-<div id="lista"></div>
 
 </section>
 
@@ -171,9 +161,27 @@ onchange="toggleMultitrack()">
 
 </div>
 
+<button id="btnEquipamiento"
+        class="btn-equipamiento"
+                onclick="toggleEquipamiento()">
+    Mostrar equipamiento
+</button>
+
+
+<section id="seccionProductos" class="productos" style="display:none;">
+
+<h2>Eleji el Equipamiento</h2>
+
+<div id="lista"></div>
+
+</section>
+
 </section>
 </main>
 
 <script src="app.js"></script>
+
+<div id="mensajeToast" class="toast"></div>
+
 </body>
 </html>
