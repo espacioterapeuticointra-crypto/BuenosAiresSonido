@@ -2,17 +2,19 @@
 // ===========================
 // CONCEPTOS FIJOS
 // ===========================
-
 const conceptosFijos = [
 
     {
-        nombre: "Operador de Sonido 2 Horas",
-        precio: 40000
+        nombre: "Operador de Sonido por Hora",
+        precio: 20000,
+        cantidad: 2,
+        minimo: 2
     },
 
     {
         nombre: "Traslado zona Norte/Oeste",
-        precio: 60000
+        precio: 60000,
+        cantidad: 1
     }
 
 ];
@@ -119,7 +121,8 @@ let items = conceptosFijos.map(c => ({
     categoria: "CONCEPTOS FIJOS",
     nombre: c.nombre,
     precio: c.precio,
-    cantidad: 1,
+    cantidad: c.cantidad,
+    minimo: c.minimo || 1,
     fijo: true
 }));
 
@@ -222,27 +225,41 @@ normales.forEach(item => {
 
     suma += subtotal;
 
-    let controles = "";
+let controles = "";
 
-    if(!item.fijo){
+if(item.nombre === "Operador de Sonido por Hora"){
 
-        const indiceProducto = productos.findIndex(
-            p => p.nombre === item.nombre
-        );
+    controles = `
+        <div class="controles-resumen">
 
-        controles = `
-            <div class="controles-resumen">
+           <button class="btn-mini" onclick="restarOperador()">−</button>
 
-                <button class="btn-mini" onclick="restar(${indiceProducto})">−</button>
+            <span class="cantidad-mini">${item.cantidad}</span>
 
-                <span class="cantidad-mini">${item.cantidad}</span>
+           <button class="btn-mini" onclick="sumarOperador()">+</button>
 
-                <button class="btn-mini" onclick="sumar(${indiceProducto})">+</button>
+        </div>
+    `;
 
-            </div>
-        `;
+}else if(!item.fijo){
 
-    }
+    const indiceProducto = productos.findIndex(
+        p => p.nombre === item.nombre
+    );
+
+    controles = `
+        <div class="controles-resumen">
+
+            <button class="btn-mini" onclick="restar(${indiceProducto})">−</button>
+
+            <span class="cantidad-mini">${item.cantidad}</span>
+
+            <button class="btn-mini" onclick="sumar(${indiceProducto})">+</button>
+
+        </div>
+    `;
+
+}
 
     carrito.innerHTML += `
 
@@ -337,7 +354,6 @@ if(manuales.length){
 
 total.textContent = suma.toLocaleString("es-AR");
 }
-
 function sumar(indice){
 
     const producto=productos[indice];
@@ -364,42 +380,58 @@ function sumar(indice){
 
 }
 
+
+// ===========================
+// OPERADOR DE SONIDO
+// ===========================
+
+function sumarOperador(){
+
+    const operador = items.find(
+        i => i.nombre === "Operador de Sonido por Hora"
+    );
+
+    if(!operador) return;
+
+    operador.cantidad++;
+
+    render();
+
+}
+
+function restarOperador(){
+
+    const operador = items.find(
+        i => i.nombre === "Operador de Sonido por Hora"
+    );
+
+    if(!operador) return;
+
+    if(operador.cantidad > operador.minimo){
+
+        operador.cantidad--;
+
+    }
+
+    render();
+
+}
+
+
 function restar(indice){
 
     const producto = productos[indice];
 
     const item = items.find(i => i.nombre === producto.nombre);
 
-    if(!item) return;
-
-    // Si es un concepto fijo, nunca puede bajar de 1
-    if(producto.fijo){
-
-        if(item.cantidad > 1){
-            item.cantidad--;
-        }
-
-    }else{
-
-        item.cantidad--;
-
-       if(item.cantidad <= 0){
-
-    items = items.filter(i => i.nombre !== producto.nombre);
-
-    productosConfirmados = productosConfirmados.filter(
-        nombre => nombre !== producto.nombre
-    );
-
-}
-
+    
     }
 
 
 
     render();
 
-}
+
 
 function sumarPendiente(indice){
 
@@ -548,13 +580,14 @@ window.open(
 render();
 function limpiarTodo(){
 
-    items = conceptosFijos.map(c => ({
-        categoria: "CONCEPTOS FIJOS",
-        nombre: c.nombre,
-        precio: c.precio,
-        cantidad: 1,
-        fijo: true
-    }));
+items = conceptosFijos.map(c => ({
+    categoria: "CONCEPTOS FIJOS",
+    nombre: c.nombre,
+    precio: c.precio,
+    cantidad: c.cantidad,
+    minimo: c.minimo || 1,
+    fijo: true
+}));
 
     // Apagar el interruptor de Multitrack
     document.getElementById("chkMultitrack").checked = false;
