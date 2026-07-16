@@ -625,25 +625,10 @@ cantidadesPendientes = {};
 
     }, 100);
 
-    setTimeout(() => {
-
-    document.querySelector(".combos").scrollIntoView({
-        behavior: "smooth",
-        block: "start"
-    });
-
-}, 100);
-
 document.getElementById("resumen").style.display = "none";
 
 }
 
-
-const btnEquipamiento = document.getElementById("btnEquipamiento");
-btnEquipamiento.disabled = false;
-btnEquipamiento.textContent = "Mostrar equipamiento";
-
-    render();
 
 
 // ===========================
